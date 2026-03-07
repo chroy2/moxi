@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-cortex-m = { version = "0.7.7", features = ["critical-section-single-core"] }
+cortex-m = { version = "0.7.7" }
 cortex-m-rt = "0.7.5"
 defmt = "1.0.1"
 defmt-rtt = "1.1.0"
@@ -20,5 +20,8 @@ embassy-time = { version = "0.4.0", features = [
 ] }
 heapless = { version = "0.9.2", features = ["defmt"] }
 libscd = { version = "0.5.1", features = ["scd4x", "async", "defmt"] }
-microbit-bsp = { version = "0.4.0", features = ["defmt"] }
+microbit-bsp = { version = "0.4.0", features = ["defmt", "trouble"] }
+nrf-mpsl = { version = "0.3.0", features = ["nrf52833"] }
+nrf-sdc = { version = "0.3.0", features = ["nrf52833"] }
 panic-probe = { version = "1.0.0", features = ["print-defmt"] }
+trouble-host = { version = "0.6.0", features = ["defmt"] }
