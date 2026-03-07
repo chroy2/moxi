@@ -1,4 +1,8 @@
 use defmt::info;
+use embassy_sync::{
+    blocking_mutex::raw::ThreadModeRawMutex,
+    watch::{DynReceiver, Watch},
+};
 use embassy_time::{Delay, Timer};
 use libscd::asynchronous::scd4x::Scd4x;
 use microbit_bsp::embassy_nrf::{
@@ -6,6 +10,13 @@ use microbit_bsp::embassy_nrf::{
     peripherals::{P0_26, P1_00, TWISPI0},
     twim::{self, Twim},
 };
+
+const CO2_CONSUMERS: usize = 1;
+static CO2: Watch<ThreadModeRawMutex, u16, CO2_CONSUMERS> = Watch::new();
+
+pub fn get_receiver() -> Option<DynReceiver<'static, u16>> {
+    CO2.dyn_receiver()
+}
 
 #[embassy_executor::task]
 pub async fn sense_task(
@@ -35,13 +46,16 @@ pub async fn sense_task(
         defmt::panic!("Failed to start periodic measurement: {:?}", e);
     }
 
+    let tx = CO2.sender();
+
     loop {
         if scd.data_ready().await.unwrap() {
             let m = scd.read_measurement().await.unwrap();
             info!(
                 "CO2: {} Humidity: {} Temperature: {}",
                 m.co2 as u16, m.humidity as u16, m.temperature as u16
-            )
+            );
+            tx.send(m.co2 as u16);
         }
 
         Timer::after_millis(1000).await;
