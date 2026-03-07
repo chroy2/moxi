@@ -32,7 +32,7 @@ pub async fn display_task(mut matrix: LedMatrix<Output<'static>, ROWS, COLS>) {
         }
 
         matrix
-            .display(Frame::new(level), Duration::from_millis(3000))
+            .display(Frame::new(level), Duration::from_secs(4))
             .await;
     }
 }
