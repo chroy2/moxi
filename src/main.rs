@@ -4,50 +4,15 @@
 use defmt::info;
 use defmt_rtt as _;
 use embassy_executor::Spawner;
-use embassy_nrf::{
-    bind_interrupts,
-    peripherals::TWISPI0,
-    twim::{self, Twim},
-};
-use embassy_time::{Delay, Timer};
-use libscd::asynchronous::scd4x::Scd4x;
 use panic_probe as _;
 
+use crate::sense::sense_task;
+
+mod sense;
+
 #[embassy_executor::main]
-async fn main(_spawner: Spawner) {
+async fn main(spawner: Spawner) {
     info!("Starting...");
     let p = embassy_nrf::init(Default::default());
-    bind_interrupts!(struct Irqs {
-        TWISPI0 => twim::InterruptHandler<TWISPI0>;
-    });
-    let i2c = Twim::new(
-        p.TWISPI0,
-        Irqs,
-        p.P1_00,
-        p.P0_26,
-        Default::default(),
-        &mut [], // empty ram buf
-    );
-
-    let mut scd = Scd4x::new(i2c, Delay);
-    Timer::after_millis(30).await;
-
-    _ = scd.stop_periodic_measurement().await;
-
-    info!("Sensor serial number: {:?}", scd.serial_number().await);
-    if let Err(e) = scd.start_periodic_measurement().await {
-        defmt::panic!("Failed to start periodic measurement: {:?}", e);
-    }
-
-    loop {
-        if scd.data_ready().await.unwrap() {
-            let m = scd.read_measurement().await.unwrap();
-            info!(
-                "CO2: {} Humidity: {} Temperature: {}",
-                m.co2 as u16, m.humidity as u16, m.temperature as u16
-            )
-        }
-
-        Timer::after_millis(1000).await;
-    }
+    spawner.must_spawn(sense_task(p.TWISPI0, p.P1_00, p.P0_26));
 }
