@@ -1,11 +1,11 @@
 use defmt::info;
-use embassy_nrf::{
+use embassy_time::{Delay, Timer};
+use libscd::asynchronous::scd4x::Scd4x;
+use microbit_bsp::embassy_nrf::{
     Peri, bind_interrupts,
     peripherals::{P0_26, P1_00, TWISPI0},
     twim::{self, Twim},
 };
-use embassy_time::{Delay, Timer};
-use libscd::asynchronous::scd4x::Scd4x;
 
 #[embassy_executor::task]
 pub async fn sense_task(
