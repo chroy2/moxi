@@ -7,22 +7,22 @@ edition = "2024"
 cortex-m = { version = "0.7.7" }
 cortex-m-rt = "0.7.5"
 defmt = "1.0.1"
-defmt-rtt = "1.1.0"
-embassy-executor = { version = "0.7", features = [
+defmt-rtt = "1.0.0"
+embassy-executor = { version = "0.7.0", features = [
     "arch-cortex-m",
     "defmt",
     "executor-thread",
+    "task-arena-size-16384",
 ] }
-embassy-sync = { version = "0.7.2", features = ["defmt"] }
 embassy-time = { version = "0.4.0", features = [
     "defmt",
     "defmt-timestamp-uptime",
 ] }
-heapless = { version = "0.9.2", features = ["defmt"] }
-libscd = { version = "0.5.1", features = ["scd4x", "async", "defmt"] }
-microbit-bsp = { version = "0.4.0", features = ["defmt", "trouble"] }
-nrf-mpsl = { version = "0.3.0", features = ["nrf52833"] }
-nrf-sdc = { version = "0.3.0", features = ["nrf52833"] }
+libscd = { version = "0.5.0", features = ["scd4x", "async", "defmt"] }
 panic-probe = { version = "1.0.0", features = ["print-defmt"] }
-static_cell = "2.1.1"
+microbit-bsp = { version = "0.4.0", features = ["trouble"] }
+embassy-sync = { version = "0.7.0", features = ["defmt"] }
+heapless = { version = "0.8.0", features = ["defmt-03"] }
+static_cell = "2.1.0"
 trouble-host = { version = "0.2.0", features = ["defmt"] }
+embassy-futures = { version = "0.1.1", features = ["defmt"] }

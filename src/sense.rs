@@ -11,10 +11,17 @@ use microbit_bsp::embassy_nrf::{
     twim::{self, Twim},
 };
 
-const CO2_CONSUMERS: usize = 1;
-static CO2: Watch<ThreadModeRawMutex, u16, CO2_CONSUMERS> = Watch::new();
+#[derive(Clone, Copy)]
+pub struct SensorReadings {
+    pub co2: u16,
+    pub temperature: i8,
+    pub humidity: u8,
+}
 
-pub fn get_receiver() -> Option<DynReceiver<'static, u16>> {
+const CO2_CONSUMERS: usize = 2;
+static CO2: Watch<ThreadModeRawMutex, SensorReadings, CO2_CONSUMERS> = Watch::new();
+
+pub fn get_receiver() -> Option<DynReceiver<'static, SensorReadings>> {
     CO2.dyn_receiver()
 }
 
@@ -55,7 +62,11 @@ pub async fn sense_task(
                 "CO2: {} Humidity: {} Temperature: {}",
                 m.co2 as u16, m.humidity as u16, m.temperature as u16
             );
-            tx.send(m.co2 as u16);
+            tx.send(SensorReadings {
+                co2: m.co2 as u16,
+                humidity: m.humidity as u8,
+                temperature: m.temperature as i8,
+            });
         }
 
         Timer::after_millis(1000).await;

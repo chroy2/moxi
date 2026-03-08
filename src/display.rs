@@ -16,7 +16,8 @@ pub async fn display_task(mut matrix: LedMatrix<Output<'static>, ROWS, COLS>) {
     let mut rx = sense::get_receiver().unwrap();
     let mut txt: String<6> = String::new();
     loop {
-        let co2 = rx.get().await;
+        let readings = rx.get().await;
+        let co2 = readings.co2;
         write!(&mut txt, " {}", co2).ok();
         matrix.scroll(txt.as_str()).await;
         txt.clear();
