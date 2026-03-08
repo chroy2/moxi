@@ -1,5 +1,5 @@
 # Moxi
 
-Follows the tutorial for microbit by [RustyBits](https://youtu.be/vT4-bvHCbE0?si=VE9nA9tVZa4WpRfT)
+Follows the [tutorial](https://youtu.be/vT4-bvHCbE0?si=VE9nA9tVZa4WpRfT) for microbit by [RustyBits](https://github.com/therustybits)
 
-Air quality monitor
+Air quality, Temperature, and Humidity monitor.
